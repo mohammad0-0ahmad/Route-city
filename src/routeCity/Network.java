@@ -15,6 +15,14 @@ public class Network implements Dijkstras {
 
     /*  >>Constructors<<  */
 
+    /**
+     * Constructor with possibility to create a network with other names at the stationsnames, more stations or
+     * other amount of paths than provided in the project.
+     * 2 or 3 nodes
+     * @param min minimun paths
+     * @param max maximum paths
+     * @param nodesName busstations names
+     */
     private Network(int min,int max,String[] nodesName) {
         remake(min,max,nodesName);
     }
@@ -38,6 +46,12 @@ public class Network implements Dijkstras {
     public void printNetwork() {
     }
 
+    /**
+     * Function to create the nodes and set the network.
+     * @param min minimum of paths
+     * @param max maximum of paths
+     * @param nodesName busstation names
+     */
     public void remake(int min,int max,String[] nodesName) {
         nodes = new Node[nodesName.length];
         for (int i = 0; i <nodes.length; i++) {
@@ -46,6 +60,12 @@ public class Network implements Dijkstras {
         setRandomRelations(min,max);
     }
 
+    /**
+     * Method to get the correct symbol for the station. It use the ASCIInumber and begin at "A" and add some numbers.
+     * If a higher amount than 26 nodes is used it start over with an "A" but other numbers after.
+     * @param index nodes
+     * @return the symbolname
+     */
     public String getNodeSymbol(int index) {
         char letter = (char) (index % 26+65);
         return letter + ""+(index / 26 + 1);
