@@ -16,23 +16,39 @@ public class Network implements Dijkstras {
     /*  >>Constructors<<  */
 
     /**
-     * Constructor with possibility to create a network with other names at the stationsnames, more stations or
+     * Constructor with possibility to create a network with other names at the stations name, more stations or
      * other amount of paths than provided in the project.
      * 2 or 3 nodes
      * @param min minimun paths
      * @param max maximum paths
      * @param nodesName busstations names
      */
-    private Network(int min,int max,String[] nodesName) {
-        remake(min,max,nodesName);
+    private Network(int min,int max,String[] nodesName) { remake(min,max,nodesName);
     }
 
     /*  >>>Member methods<<<  */
-    private void setRandomRelations(int min, int max) {
-    }
 
-    private int getRandomWeight(int min, int max) {
-        return -1;
+    private void setRandomRelations(int min, int max) {}
+
+    /**
+     * It returns a random weight that can be used as path weight between tow nodes.
+     * @param min the minimal possible number of the returned value.
+     * @param max the maximal possible number of the returned value.
+     * @return a weight that is larger or equals than 1.
+     */
+    private static int getRandomWeight(int min, int max) {
+        if (min > max){
+            System.err.println("min value is greater than max value.");
+            int temp = max;
+            max = min;
+            min = temp;
+        }
+        int between = max - min;
+        int result = (int)(Math.round(Math.random() * between)) + min;
+        if (result < 1){
+            return 1;
+        }
+        return result ;
     }
 
     private boolean isClosed() {
@@ -66,7 +82,7 @@ public class Network implements Dijkstras {
      * @param index nodes
      * @return the symbolname
      */
-    public String getNodeSymbol(int index) {
+    private String getNodeSymbol(int index) {
         char letter = (char) (index % 26+65);
         return letter + ""+(index / 26 + 1);
     }
