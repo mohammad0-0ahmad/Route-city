@@ -11,7 +11,7 @@ public class Network implements Dijkstras {
 
     /*  >Member variables<  */
 
-    private Node[] nodes;
+    public Node[] nodes;
 
     /*  >>Constructors<<  */
 
@@ -59,7 +59,34 @@ public class Network implements Dijkstras {
         return null;
     }
 
+    /**
+     * It prints the network in the console. "in table format"
+     */
     public void printNetwork() {
+        StringBuilder firstRow = new StringBuilder("\t");
+        StringBuilder symbolsAndBusStations = new StringBuilder();
+        StringBuilder rowsToPrint = new StringBuilder();
+        for (Node rowNode : nodes) {
+            symbolsAndBusStations.append(rowNode.getSymbol()).append(" : ").append(rowNode.getName()).append("\n");
+            firstRow.append(rowNode.getSymbol()).append("\t");
+            StringBuilder rowToPrint = new StringBuilder(rowNode.getSymbol() + "\t");
+            for (Node columnNode : nodes) {
+                int weightBetweenNodes = rowNode.isConnectedWith(columnNode);
+                switch (weightBetweenNodes){
+                    // -1 means that the nodes is not connected.
+                    case -1:
+                        rowToPrint.append("-\t");break;
+                    // 0 means that rowNode and columnNode refers to the same node.
+                    case 0:
+                        rowToPrint.append("\t");break;
+                    // adding the weight of the path that is exist between the rowNode and columnNode.
+                    default:
+                        rowToPrint.append(weightBetweenNodes).append("\t");
+                }
+            }
+            rowsToPrint.append(rowToPrint.append("\n"));
+        }
+        System.out.println(firstRow + "\n" + rowsToPrint + "\n" + symbolsAndBusStations);
     }
 
     /**

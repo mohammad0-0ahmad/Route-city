@@ -66,28 +66,59 @@ public class Node {
      * @param weight see: {@link Path#weight}.
      */
     public void addLinkedNode(Node destinationNode,int weight){
-        // Checking if the node have already a path with the target node.
-        boolean hasAlreadyPathWith = false;
-        for (Path linkedNode : linkedNodes) {
-            if (linkedNode.getDestinationNode() == destinationNode) {
-                hasAlreadyPathWith = true;
-                break;
+        if (destinationNode == null){
+            System.err.println("The received node object is null.");
+        }else{
+            if (weight <= 0) {
+                // printing warning.
+                System.err.println("I can't create path between " + this.symbol + " & " + destinationNode.symbol + " because of weight value is equals or smaller than zero.");
+            } else {
+                // Checking if the node have already a path with the target node.
+                boolean hasAlreadyPathWith = false;
+                for (Path linkedNode : linkedNodes) {
+                    if (linkedNode.getDestinationNode() == destinationNode) {
+                        hasAlreadyPathWith = true;
+                        break;
+                    }
+                }
+                // Adding a path between the node is not connected yet.
+                if (!hasAlreadyPathWith) {
+                    linkedNodes.add(new Path(destinationNode, weight));
+                    // Getting the size of the array list to know if the another node have already the path.
+                    int size = destinationNode.getLinkedNodes().size();
+                    // to avoid extra calling.
+                    if (size == 0 || destinationNode.getLinkedNodes().get(size - 1).getDestinationNode() != this) {
+                        destinationNode.addLinkedNode(this, weight);
+                    }
+                } else {
+                    // printing warning.
+                    System.err.println("Nodes " + this.symbol + " & " + destinationNode.symbol + " are already connected.");
+                }
             }
-        }
-        // Adding a path between the node is not connected yet.
-        if (!hasAlreadyPathWith) {
-            linkedNodes.add(new Path(destinationNode, weight));
-            // Getting the size of the array list to know if the another node have already the path.
-            int size = destinationNode.getLinkedNodes().size();
-            // to avoid extra calling.
-            if (size == 0 || destinationNode.getLinkedNodes().get(size - 1).getDestinationNode() != this) {
-                destinationNode.addLinkedNode(this, weight);
-            }
-        }else {
-            // printing warning.
-            System.err.println("Nodes "+this.symbol+ " & "+ destinationNode.symbol +" are already connected.");
         }
     }
+
+    /**
+     * It can be used to check if two nodes is connected OR to return the weight of the path that can be exist between two nodes.
+     * @return 0 if the both references belong to the same node object OR -1 that means the node is not connected OR a number that refer to the weight between the nodes.
+     */
+     public int isConnectedWith(Node node){
+         if (node == null){
+             System.err.println("The received node object is null.");
+             return -1;
+         }
+         // Checking if node parameter is the same object that used to call this method.
+         if (this == node){
+             return 0;
+         }
+         // Checking if the nodes is connected and return the weight if they are connected.
+         for (Path path : linkedNodes) {
+             if (path.destinationNode == node){
+                 return path.getWeight();
+             }
+         }
+        return -1;
+     }
 
     /**
      * It represent the path between a node and target node."two nodes"
