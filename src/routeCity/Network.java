@@ -1,13 +1,25 @@
 package routeCity;
 
+import java.util.ArrayList;
+
 public class Network implements Dijkstras {
     /* static variables & methods */
     public static String[] BUS_STATIONS = {"Kungsgatan", "Centralstationen", "Drottningtorget", "Hamngatan",
             "Vasaplatsen", "Sportarenan", "Flygplatsen", "Södra vägen", "Musikvägen", "Kulturvägen"};
     private static Network instance = new Network(2,3,Network.BUS_STATIONS);
+    private ArrayList<Node> listToRandomFrom = new ArrayList<Node>();
+    private static Node fromNode;
+    private static Node toNode;
+    private static int fromNodePositionInArray;
+    private static int toNodePositionInArray;
+    private int minNodes;
+    private int maxNodes;
+    private int minWeight = 1;
+    private int maxWeight = 10;
     public static Network getInstance() {
         return instance;
     }
+
 
     /*  >Member variables<  */
 
@@ -23,28 +35,87 @@ public class Network implements Dijkstras {
      * @param max maximum paths
      * @param nodesName busstations names
      */
-    private Network(int min,int max,String[] nodesName) { remake(min,max,nodesName);
+    private Network(int min,int max,String[] nodesName) {
+        this.minNodes = min;
+        this.maxNodes = max;
+        remake(nodesName);
+        printNetwork();
     }
-
     /*  >>>Member methods<<<  */
 
-    private void setRandomRelations(int min, int max) {}
+        private void setRandomRelations() {
+            setFirstRoundOfConnections();
+            proceedRandomProcess();
+        }
+        private void setFirstRoundOfConnections() {
+            prepareListWithNodesNotFullyConnected();
+            fromNode = getRandomNode();
+            fromNodePositionInArray = getArrayPosition(fromNode);
+            int startNodePositionInArray = fromNodePositionInArray;
+            listToRandomFrom.remove(fromNode);
+            while (listToRandomFrom.size() > 0) {
+                toNode = getRandomNode();
+                toNodePositionInArray = getArrayPosition(toNode);
+                listToRandomFrom.remove(toNode);
+                nodes[fromNodePositionInArray].addLinkedNode(nodes[toNodePositionInArray],getRandomWeight());
+                fromNode = toNode;
+                fromNodePositionInArray = toNodePositionInArray;
+            }
+            nodes[fromNodePositionInArray].addLinkedNode(nodes[startNodePositionInArray],getRandomWeight());
+        }
+        private void proceedRandomProcess() {
+            prepareListWithNodesNotFullyConnected();
+            while (listToRandomFrom.size()>maxNodes) {
+                prepareListWithNodesNotFullyConnected();
+                fromNode = getRandomNode();
+                fromNodePositionInArray = getArrayPosition(fromNode);
+                listToRandomFrom.remove(fromNode);
+                toNode = getRandomNode();
+                toNodePositionInArray = getArrayPosition(toNode);
+                listToRandomFrom.remove(toNode);
+                if (fromNode.isConnectedWith(toNode)!=0) {
+                    nodes[fromNodePositionInArray].addLinkedNode(nodes[toNodePositionInArray], getRandomWeight());
+                }
+            }
+        }
+        private void prepareListWithNodesNotFullyConnected() {
+            listToRandomFrom.clear();
+            for (Node node:nodes) {
+                if (node.getLinkedNodes().size()<maxNodes) {
+                    listToRandomFrom.add(node);
+                }
+            }
+        }
 
+
+        private int getArrayPosition(Node nodeToSearch) {
+            int i;
+            for (i = 0; i < nodes.length; i++) {
+                if (nodes[i].getName().equals(nodeToSearch.getName())) {
+                    break;
+                }
+            }
+            return i;
+        }
+
+        private Node getRandomNode() {
+            return listToRandomFrom.get((int) (Math.random() * listToRandomFrom.size()));
+        }
     /**
      * It returns a random weight that can be used as path weight between tow nodes.
      * @param min the minimal possible number of the returned value.
      * @param max the maximal possible number of the returned value.
      * @return a weight that is larger or equals than 1.
      */
-    private static int getRandomWeight(int min, int max) {
-        if (min > max){
+    private int getRandomWeight() {
+        if (minWeight > maxWeight){
             System.err.println("min value is greater than max value.");
-            int temp = max;
-            max = min;
-            min = temp;
+            int temp = maxWeight;
+            maxWeight = minWeight;
+            minWeight = temp;
         }
-        int between = max - min;
-        int result = (int)(Math.round(Math.random() * between)) + min;
+        int between = maxWeight - minWeight;
+        int result = (int)(Math.round(Math.random() * between)) + minWeight;
         if (result < 1){
             return 1;
         }
@@ -95,12 +166,12 @@ public class Network implements Dijkstras {
      * @param max maximum of paths
      * @param nodesName busstation names
      */
-    public void remake(int min,int max,String[] nodesName) {
+    public void remake(String[] nodesName) {
         nodes = new Node[nodesName.length];
         for (int i = 0; i <nodes.length; i++) {
             nodes[i] = new Node(getNodeSymbol(i), BUS_STATIONS[i]);
         }
-        setRandomRelations(min,max);
+        setRandomRelations();
     }
 
     /**
