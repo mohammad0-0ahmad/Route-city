@@ -1,6 +1,7 @@
 package routeCity;
+import java.util.ArrayList;
 
-public class Network implements Dijkstras {
+public class Network implements Dijkstras,NodesToNetwork{
     /* static variables & methods */
     public static String[] BUS_STATIONS = {"Kungsgatan", "Centralstationen", "Drottningtorget", "Hamngatan",
             "Vasaplatsen", "Sportarenan", "Flygplatsen", "Södra vägen", "Musikvägen", "Kulturvägen"};
@@ -11,7 +12,7 @@ public class Network implements Dijkstras {
 
     /*  >Member variables<  */
 
-    public Node[] nodes;
+    private Node[] nodes;
 
     /*  >>Constructors<<  */
 
@@ -23,17 +24,48 @@ public class Network implements Dijkstras {
      * @param max maximum paths
      * @param nodesName busstations names
      */
-    private Network(int min,int max,String[] nodesName) { remake(min,max,nodesName);
+    private Network(int min,int max,String[] nodesName) {
+        remake(max,nodesName);
     }
-
     /*  >>>Member methods<<<  */
 
-    private void setRandomRelations(int min, int max) {}
+    /**
+     * It creates random paths "relations" between network nodes.
+     * @param max amount maximum paths that a node will have with the other nodes.
+     */
+    private void setRandomRelations(int max) {
+        // Refers to the status of the actual process.
+        boolean isCompleted = false;
+        // Converting nodes array to array list and reorder it randomly.
+        ArrayList<Node> temp = getRandomOrderedNodes(nodes);
+        // Creating paths between all nodes that make them all connected. "To make sure that network will be closed."
+        for (int i = 0; i < temp.size()-1; i++){
+            temp.get(i).addLinkedNode(temp.get(i+1),getRandomWeight(1,10));
+        }
+        // Try to fill random paths between nodes so almost all nodes get maximum amount paths.
+        while (!isCompleted){
+            temp = getPossibleNodesToLink(temp,max);
+            // If there are no nodes able to get linked will change isCompleted value to true to be able to end the process.
+            if (temp.size() <= 1){
+                isCompleted = true;
+            }else {
+                // Creating paths between nodes that are able to get connected.
+                for (Node node : temp) {
+                    // Getting the all node that are able to be connected with the actual node.
+                    ArrayList<Node> possibleToLinkWithMe = getPossibleNodesToLink(temp,max,node);
+                    // If there is a node able to be connected a path will be created in between.
+                    if (possibleToLinkWithMe.size() > 0){
+                        node.addLinkedNode(possibleToLinkWithMe.get(0),getRandomWeight(1,10));
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * It returns a random weight that can be used as path weight between tow nodes.
      * @param min the minimal possible number of the returned value.
-     * @param max the maximal possible number of the returned value.
+     * @param max the maximum possible number of the returned value.
      * @return a weight that is larger or equals than 1.
      */
     private static int getRandomWeight(int min, int max) {
@@ -45,10 +77,7 @@ public class Network implements Dijkstras {
         }
         int between = max - min;
         int result = (int)(Math.round(Math.random() * between)) + min;
-        if (result < 1){
-            return 1;
-        }
-        return result ;
+        return Math.max(result, 1);
     }
 
     private boolean isClosed() {
@@ -91,16 +120,15 @@ public class Network implements Dijkstras {
 
     /**
      * Function to create the nodes and set the network.
-     * @param min minimum of paths
      * @param max maximum of paths
      * @param nodesName busstation names
      */
-    public void remake(int min,int max,String[] nodesName) {
+    public void remake(int max,String[] nodesName) {
         nodes = new Node[nodesName.length];
         for (int i = 0; i <nodes.length; i++) {
             nodes[i] = new Node(getNodeSymbol(i), BUS_STATIONS[i]);
         }
-        setRandomRelations(min,max);
+        setRandomRelations(max);
     }
 
     /**
