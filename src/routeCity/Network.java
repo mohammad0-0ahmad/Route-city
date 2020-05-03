@@ -1,50 +1,77 @@
 package routeCity;
 import java.util.ArrayList;
-
+/**
+ * It represents a network of nodes.
+ */
 public class Network implements Dijkstras,NodesToNetwork{
+
     /* static variables & methods */
-    public static String[] BUS_STATIONS = {"Kungsgatan", "Centralstationen", "Drottningtorget", "Hamngatan",
-            "Vasaplatsen", "Sportarenan", "Flygplatsen", "Södra vägen", "Musikvägen", "Kulturvägen"};
-    private static Network instance = new Network(2,3,Network.BUS_STATIONS);
+    /**
+     * It holds some bus station names which are used to create the random network.
+     */
+    public static final String[] BUS_STATIONS = {"Kungsgatan", "Centralstationen", "Drottningtorget", "Hamngatan", "Vasaplatsen", "Sportarenan", "Flygplatsen", "Södra vägen", "Musikvägen", "Kulturvägen"};
+    /**
+     * Random network that fits the actual requirements.
+     */
+    private static final Network instance = new Network(Network.BUS_STATIONS,3,1,10);
+
+    /**
+     * Getter method.
+     * @return the only network object. "singleton".
+     */
     public static Network getInstance() {
         return instance;
     }
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >Member variables<  */
 
     private Node[] nodes;
-
+    /**
+     * Amount maximum paths that a node has with the other nodes. Note: Its value should be greater or equals to 2 to be able to create a nodes network. "Should all nodes be connected together."
+     */
+    private final int maxPaths;
+    /**
+     * Minimum weight of a path. Note: Path weight will not be less than 1 even if this variable hold a value less than 1.
+     */
+    private int minWeight;
+    /**
+     * Maximum weight of a path.
+     */
+    private int maxWeight;
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >>Constructors<<  */
 
     /**
      * Constructor with possibility to create a network with other names at the stations name, more stations or
      * other amount of paths than provided in the project.
      * 2 or 3 nodes
-     * @param min minimun paths
-     * @param max maximum paths
+     * @param maxPaths maximum paths
      * @param nodesName busstations names
      */
-    private Network(int min,int max,String[] nodesName) {
-        remake(max,nodesName);
+    private Network(String[] nodesName,int maxPaths,int minWeight,int maxWeight) {
+        this.maxPaths = maxPaths;
+        this.minWeight = minWeight;
+        this.maxWeight = maxWeight;
+        remake(nodesName,true);
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >>>Member methods<<<  */
 
     /**
      * It creates random paths "relations" between network nodes.
-     * @param max amount maximum paths that a node will have with the other nodes.
      */
-    private void setRandomRelations(int max) {
+    private void setRandomRelations() {
         // Refers to the status of the actual process.
         boolean isCompleted = false;
         // Converting nodes array to array list and reorder it randomly.
         ArrayList<Node> temp = getRandomOrderedNodes(nodes);
         // Creating paths between all nodes that make them all connected. "To make sure that network will be closed."
         for (int i = 0; i < temp.size()-1; i++){
-            temp.get(i).addLinkedNode(temp.get(i+1),getRandomWeight(1,10));
+            temp.get(i).addLinkedNode(temp.get(i+1),getRandomWeight());
         }
         // Try to fill random paths between nodes so almost all nodes get maximum amount paths.
         while (!isCompleted){
-            temp = getPossibleNodesToLink(temp,max);
+            temp = getPossibleNodesToLink(temp,maxPaths);
             // If there are no nodes able to get linked will change isCompleted value to true to be able to end the process.
             if (temp.size() <= 1){
                 isCompleted = true;
@@ -52,10 +79,10 @@ public class Network implements Dijkstras,NodesToNetwork{
                 // Creating paths between nodes that are able to get connected.
                 for (Node node : temp) {
                     // Getting the all node that are able to be connected with the actual node.
-                    ArrayList<Node> possibleToLinkWithMe = getPossibleNodesToLink(temp,max,node);
+                    ArrayList<Node> possibleToLinkWithMe = getPossibleNodesToLink(temp,maxPaths,node);
                     // If there is a node able to be connected a path will be created in between.
                     if (possibleToLinkWithMe.size() > 0){
-                        node.addLinkedNode(possibleToLinkWithMe.get(0),getRandomWeight(1,10));
+                        node.addLinkedNode(possibleToLinkWithMe.get(0),getRandomWeight());
                     }
                 }
             }
@@ -64,24 +91,18 @@ public class Network implements Dijkstras,NodesToNetwork{
 
     /**
      * It returns a random weight that can be used as path weight between tow nodes.
-     * @param min the minimal possible number of the returned value.
-     * @param max the maximum possible number of the returned value.
      * @return a weight that is larger or equals than 1.
      */
-    private static int getRandomWeight(int min, int max) {
-        if (min > max){
-            System.err.println("min value is greater than max value.");
-            int temp = max;
-            max = min;
-            min = temp;
+    private int getRandomWeight() {
+        if (minWeight > maxWeight){
+            System.err.println("minWeight value is greater than maxWeight value. The values will be switched.");
+            int temp = maxWeight;
+            maxWeight = minWeight;
+            minWeight = temp;
         }
-        int between = max - min;
-        int result = (int)(Math.round(Math.random() * between)) + min;
+        int between = maxWeight - minWeight;
+        int result = (int)(Math.round(Math.random() * between)) + minWeight;
         return Math.max(result, 1);
-    }
-
-    private boolean isClosed() {
-        return false;
     }
 
     public String getShortestPath(Node start, Node end) {
@@ -119,20 +140,37 @@ public class Network implements Dijkstras,NodesToNetwork{
     }
 
     /**
-     * Function to create the nodes and set the network.
-     * @param max maximum of paths
-     * @param nodesName busstation names
+     * Function to create the nodes and set the network OR to recreate new relations between the nodes of an exist network.
+     * @param nodesName bus station names
+     * @param replace will make the function recreates network node depending on nodesName value in case its value was true OR it will just remove nodes relations in case its value was false.
      */
-    public void remake(int max,String[] nodesName) {
-        nodes = new Node[nodesName.length];
-        for (int i = 0; i <nodes.length; i++) {
-            nodes[i] = new Node(getNodeSymbol(i), BUS_STATIONS[i]);
+    private void remake(String[] nodesName,boolean replace) {
+        // replacing nodes array with new one.
+        if (replace) {
+            nodes = new Node[nodesName.length];
+            for (int i = 0; i < nodes.length; i++) {
+                nodes[i] = new Node(getNodeSymbol(i), BUS_STATIONS[i]);
+            }
+        }else {
+            // Clearing nodes relations.
+            for (Node node:nodes) {
+                node.getLinkedNodes().clear();
+            }
         }
-        setRandomRelations(max);
+        // Creating random relations between nodes.
+        setRandomRelations();
     }
 
     /**
-     * Method to get the correct symbol for the station. It use the ASCIInumber and begin at "A" and add some numbers.
+     * It calls {@link #remake(String[],boolean)} to clear the relation between the actual network nodes.
+     * Made it just to make calling the method easier without need to send parameters.
+     */
+    public void remake(){
+        remake(null,false);
+    }
+
+    /**
+     * Method to get the correct symbol for the station. It use the ASCII number and begin at "A" and add some numbers.
      * If a higher amount than 26 nodes is used it start over with an "A" but other numbers after.
      * @param index nodes
      * @return the symbolname
