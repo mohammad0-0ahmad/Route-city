@@ -27,6 +27,13 @@ public class Network implements Dijkstras,NodesToNetwork{
 
     private Node[] nodes;
     /**
+     * Getter method.
+     * @return the nodes array
+     */
+    public Node[] getNodes() {
+        return nodes;
+    }
+    /**
      * Amount maximum paths that a node has with the other nodes. Note: Its value should be greater or equals to 2 to be able to create a nodes network. "Should all nodes be connected together."
      */
     private final int maxPaths;
@@ -159,6 +166,9 @@ public class Network implements Dijkstras,NodesToNetwork{
         }
         // Creating random relations between nodes.
         setRandomRelations();
+        if (!replace) {
+            System.out.println("The network is remaked in a randomed way.");
+        }
     }
 
     /**
