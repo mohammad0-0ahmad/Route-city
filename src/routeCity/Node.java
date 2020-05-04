@@ -6,6 +6,7 @@ import java.util.ArrayList;
  * It represent a node or vertex of a network.
  */
 public class Node {
+
     /*  >Member variables<  */
     /**
      * Storing a symbol that represent the node. "to make it easier for user in console for example"
@@ -19,7 +20,7 @@ public class Node {
      * Storing paths that refer to the nodes which are connected with the actual node.
      */
     private ArrayList<Path> linkedNodes;
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >>Constructors<<  */
 
     /**
@@ -32,7 +33,7 @@ public class Node {
         this.name = name;
         linkedNodes = new ArrayList<>();
     }
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >>>Member methods<<<  */
 
     /**
@@ -120,10 +121,15 @@ public class Node {
         return -1;
      }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /*  >>>> Nested classes <<<<  */
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * It represent the path between a node and target node."two nodes"
      */
     public class Path{
+
         /*  >Member variables<  */
         /**
          * It refer to the weight of the path like distance and weather traffic status in the path etc. Note!! In the actual version it represent just the distance between two nodes.
@@ -133,7 +139,7 @@ public class Node {
          * The destination node.
          */
         private Node destinationNode;
-
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*  >>Constructors<<  */
 
         /**
@@ -145,7 +151,7 @@ public class Node {
             this.weight = weight;
             this.destinationNode = destinationNode;
         }
-
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*  >>>Member methods<<<  */
 
         /**

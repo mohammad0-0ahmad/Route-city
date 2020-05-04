@@ -1,129 +1,115 @@
 package routeCity;
-
 import java.util.ArrayList;
-import java.util.Scanner;
+/**
+ * It represents a network of nodes.
+ */
+public class Network implements Dijkstras,NodesToNetwork{
 
-public class Network implements Dijkstras {
     /* static variables & methods */
-    public static String[] BUS_STATIONS = {"Kungsgatan", "Centralstationen", "Drottningtorget", "Hamngatan",
-            "Vasaplatsen", "Sportarenan", "Flygplatsen", "Södra vägen", "Musikvägen", "Kulturvägen"};
-    private static Network instance = new Network(2,3,Network.BUS_STATIONS);
-    private ArrayList<Node> listToRandomFrom = new ArrayList<Node>();
-    private static Node fromNode;
-    private static Node toNode;
-    private static int fromNodePositionInArray;
-    private static int toNodePositionInArray;
-    private int minNodes;
-    private int maxNodes;
-    private int minWeight = 1;
-    private int maxWeight = 10;
+    /**
+     * It holds some bus station names which are used to create the random network.
+     */
+    public static final String[] BUS_STATIONS = {"Kungsgatan", "Centralstationen", "Drottningtorget", "Hamngatan", "Vasaplatsen", "Sportarenan", "Flygplatsen", "Södra vägen", "Musikvägen", "Kulturvägen"};
+    /**
+     * Random network that fits the actual requirements.
+     */
+    private static final Network instance = new Network(Network.BUS_STATIONS,3,1,10);
+
+    /**
+     * Getter method.
+     * @return the only network object. "singleton".
+     */
     public static Network getInstance() {
         return instance;
     }
-
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >Member variables<  */
 
-    public Node[] nodes;
-
+    private Node[] nodes;
+    /**
+     * Getter method.
+     * @return the nodes array
+     */
+    public Node[] getNodes() {
+        return nodes;
+    }
+    /**
+     * Amount maximum paths that a node has with the other nodes. Note: Its value should be greater or equals to 2 to be able to create a nodes network. "Should all nodes be connected together."
+     */
+    private final int maxPaths;
+    /**
+     * Minimum weight of a path. Note: Path weight will not be less than 1 even if this variable hold a value less than 1.
+     */
+    private int minWeight;
+    /**
+     * Maximum weight of a path.
+     */
+    private int maxWeight;
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >>Constructors<<  */
 
     /**
      * Constructor with possibility to create a network with other names at the stations name, more stations or
      * other amount of paths than provided in the project.
      * 2 or 3 nodes
-     * @param min minimun paths
-     * @param max maximum paths
+     * @param maxPaths maximum paths
      * @param nodesName busstations names
      */
-    private Network(int min,int max,String[] nodesName) {
-        this.minNodes = min;
-        this.maxNodes = max;
-        remake(nodesName);
+    private Network(String[] nodesName,int maxPaths,int minWeight,int maxWeight) {
+        this.maxPaths = maxPaths;
+        this.minWeight = minWeight;
+        this.maxWeight = maxWeight;
+        remake(nodesName,true);
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >>>Member methods<<<  */
 
-        private void setRandomRelations() {
-            setFirstRoundOfConnections();
-            proceedRandomProcess();
+    /**
+     * It creates random paths "relations" between network nodes.
+     */
+    private void setRandomRelations() {
+        // Refers to the status of the actual process.
+        boolean isCompleted = false;
+        // Converting nodes array to array list and reorder it randomly.
+        ArrayList<Node> temp = getRandomOrderedNodes(nodes);
+        // Creating paths between all nodes that make them all connected. "To make sure that network will be closed."
+        for (int i = 0; i < temp.size()-1; i++){
+            temp.get(i).addLinkedNode(temp.get(i+1),getRandomWeight());
         }
-        private void setFirstRoundOfConnections() {
-            prepareListWithNodesNotFullyConnected();
-            fromNode = getRandomNode();
-            fromNodePositionInArray = getArrayPosition(fromNode);
-            int startNodePositionInArray = fromNodePositionInArray;
-            listToRandomFrom.remove(fromNode);
-            while (listToRandomFrom.size() > 0) {
-                toNode = getRandomNode();
-                toNodePositionInArray = getArrayPosition(toNode);
-                listToRandomFrom.remove(toNode);
-                nodes[fromNodePositionInArray].addLinkedNode(nodes[toNodePositionInArray],getRandomWeight());
-                fromNode = toNode;
-                fromNodePositionInArray = toNodePositionInArray;
-            }
-            nodes[fromNodePositionInArray].addLinkedNode(nodes[startNodePositionInArray],getRandomWeight());
-        }
-        private void proceedRandomProcess() {
-            prepareListWithNodesNotFullyConnected();
-            while (listToRandomFrom.size()>maxNodes) {
-                prepareListWithNodesNotFullyConnected();
-                fromNode = getRandomNode();
-                fromNodePositionInArray = getArrayPosition(fromNode);
-                listToRandomFrom.remove(fromNode);
-                toNode = getRandomNode();
-                toNodePositionInArray = getArrayPosition(toNode);
-                listToRandomFrom.remove(toNode);
-                if (fromNode.isConnectedWith(toNode)!=0) {
-                    nodes[fromNodePositionInArray].addLinkedNode(nodes[toNodePositionInArray], getRandomWeight());
+        // Try to fill random paths between nodes so almost all nodes get maximum amount paths.
+        while (!isCompleted){
+            temp = getPossibleNodesToLink(temp,maxPaths);
+            // If there are no nodes able to get linked will change isCompleted value to true to be able to end the process.
+            if (temp.size() <= 1){
+                isCompleted = true;
+            }else {
+                // Creating paths between nodes that are able to get connected.
+                for (Node node : temp) {
+                    // Getting the all node that are able to be connected with the actual node.
+                    ArrayList<Node> possibleToLinkWithMe = getPossibleNodesToLink(temp,maxPaths,node);
+                    // If there is a node able to be connected a path will be created in between.
+                    if (possibleToLinkWithMe.size() > 0){
+                        node.addLinkedNode(possibleToLinkWithMe.get(0),getRandomWeight());
+                    }
                 }
             }
         }
-        private void prepareListWithNodesNotFullyConnected() {
-            listToRandomFrom.clear();
-            for (Node node:nodes) {
-                if (node.getLinkedNodes().size()<maxNodes) {
-                    listToRandomFrom.add(node);
-                }
-            }
-        }
+    }
 
-
-        private int getArrayPosition(Node nodeToSearch) {
-            int i;
-            for (i = 0; i < nodes.length; i++) {
-                if (nodes[i].getName().equals(nodeToSearch.getName())) {
-                    break;
-                }
-            }
-            return i;
-        }
-
-        private Node getRandomNode() {
-            return listToRandomFrom.get((int) (Math.random() * listToRandomFrom.size()));
-        }
     /**
      * It returns a random weight that can be used as path weight between tow nodes.
-     * @param min the minimal possible number of the returned value.
-     * @param max the maximal possible number of the returned value.
      * @return a weight that is larger or equals than 1.
      */
     private int getRandomWeight() {
         if (minWeight > maxWeight){
-            System.err.println("min value is greater than max value.");
+            System.err.println("minWeight value is greater than maxWeight value. The values will be switched.");
             int temp = maxWeight;
             maxWeight = minWeight;
             minWeight = temp;
         }
         int between = maxWeight - minWeight;
         int result = (int)(Math.round(Math.random() * between)) + minWeight;
-        if (result < 1){
-            return 1;
-        }
-        return result ;
-    }
-
-    private boolean isClosed() {
-        return false;
+        return Math.max(result, 1);
     }
 
     public String getShortestPath(Node start, Node end) {
@@ -134,6 +120,7 @@ public class Network implements Dijkstras {
      * It prints the network in the console. "in table format"
      */
     public void printNetwork() {
+        System.out.println("----------------Bus network----------------\nThe numbers stands for the kilometers\nbetween the stations.");
         StringBuilder firstRow = new StringBuilder("\t");
         StringBuilder symbolsAndBusStations = new StringBuilder();
         StringBuilder rowsToPrint = new StringBuilder();
@@ -158,25 +145,41 @@ public class Network implements Dijkstras {
             rowsToPrint.append(rowToPrint.append("\n"));
         }
         System.out.println(firstRow + "\n" + rowsToPrint + "\n" + symbolsAndBusStations);
+        CityRouter.setPrinted();
     }
 
-
     /**
-     * Function to create the nodes and set the network.
-     * @param min minimum of paths
-     * @param max maximum of paths
-     * @param nodesName busstation names
+     * Function to create the nodes and set the network OR to recreate new relations between the nodes of an exist network.
+     * @param nodesName bus station names
+     * @param replace will make the function recreates network node depending on nodesName value in case its value was true OR it will just remove nodes relations in case its value was false.
      */
-    public void remake(String[] nodesName) {
-        nodes = new Node[nodesName.length];
-        for (int i = 0; i <nodes.length; i++) {
-            nodes[i] = new Node(getNodeSymbol(i), BUS_STATIONS[i]);
+    private void remake(String[] nodesName,boolean replace) {
+        // replacing nodes array with new one.
+        if (replace) {
+            nodes = new Node[nodesName.length];
+            for (int i = 0; i < nodes.length; i++) {
+                nodes[i] = new Node(getNodeSymbol(i), BUS_STATIONS[i]);
+            }
+        }else {
+            // Clearing nodes relations.
+            for (Node node:nodes) {
+                node.getLinkedNodes().clear();
+            }
         }
+        // Creating random relations between nodes.
         setRandomRelations();
     }
 
     /**
-     * Method to get the correct symbol for the station. It use the ASCIInumber and begin at "A" and add some numbers.
+     * It calls {@link #remake(String[],boolean)} to clear the relation between the actual network nodes.
+     * Made it just to make calling the method easier without need to send parameters.
+     */
+    public void remake(){
+        remake(null,false);
+    }
+
+    /**
+     * Method to get the correct symbol for the station. It use the ASCII number and begin at "A" and add some numbers.
      * If a higher amount than 26 nodes is used it start over with an "A" but other numbers after.
      * @param index nodes
      * @return the symbolname
