@@ -1,6 +1,7 @@
 package routeCity;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Network implements Dijkstras {
     /* static variables & methods */
@@ -39,7 +40,6 @@ public class Network implements Dijkstras {
         this.minNodes = min;
         this.maxNodes = max;
         remake(nodesName);
-        printNetwork();
     }
     /*  >>>Member methods<<<  */
 
@@ -159,6 +159,7 @@ public class Network implements Dijkstras {
         }
         System.out.println(firstRow + "\n" + rowsToPrint + "\n" + symbolsAndBusStations);
     }
+
 
     /**
      * Function to create the nodes and set the network.
