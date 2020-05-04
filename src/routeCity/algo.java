@@ -57,7 +57,7 @@ public class algo {
             }
         }
 
-        System.out.println("The smallest distance from "+ network.nodes[fromNode].getName()+" to "+ network.nodes[toNode].getName()+" is " +distance[toNode]);
+        System.out.println("The smallest distance from "+ network.nodes[fromNode].getName()+" to "+ network.nodes[toNode].getName()+" is " +distance[toNode]+" km.");
 
         int j =toNode;
         ArrayList<Integer> connections = new ArrayList<>();
@@ -69,11 +69,11 @@ public class algo {
         }
     Collections.reverse(connections);
         if (connections.size()>0) {
-            System.out.println("please change bus at: ");
-            for (int connection : connections
-            ) {
-                System.out.println(network.nodes[connection].getName());
+            System.out.println("Please change bus at: ");
+            for (int connection : connections) {
+                System.out.print(network.nodes[connection].getName()+", ");
             }
+            System.out.println();
         }
     }
 
