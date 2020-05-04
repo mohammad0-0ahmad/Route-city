@@ -120,6 +120,7 @@ public class Network implements Dijkstras,NodesToNetwork{
      * It prints the network in the console. "in table format"
      */
     public void printNetwork() {
+        System.out.println("----------------Bus network----------------\nThe numbers stands for the kilometers\nbetween the stations.");
         StringBuilder firstRow = new StringBuilder("\t");
         StringBuilder symbolsAndBusStations = new StringBuilder();
         StringBuilder rowsToPrint = new StringBuilder();
@@ -144,6 +145,7 @@ public class Network implements Dijkstras,NodesToNetwork{
             rowsToPrint.append(rowToPrint.append("\n"));
         }
         System.out.println(firstRow + "\n" + rowsToPrint + "\n" + symbolsAndBusStations);
+        CityRouter.setPrinted();
     }
 
     /**
@@ -166,9 +168,6 @@ public class Network implements Dijkstras,NodesToNetwork{
         }
         // Creating random relations between nodes.
         setRandomRelations();
-        if (!replace) {
-            System.out.println("The network is remaked in a randomed way.");
-        }
     }
 
     /**

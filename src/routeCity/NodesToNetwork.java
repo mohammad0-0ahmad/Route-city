@@ -74,7 +74,7 @@ public interface NodesToNetwork {
     }
 
     /**
-     * Overriding av {@link #getPossibleNodesToLink(ArrayList, int)}.
+     * Overloading of {@link #getPossibleNodesToLink(ArrayList, int)}.
      * It filters a node array list by removing all nodes that can't be connect with specific node.
      * @param nodes array list that include nodes that will be filtered.
      * @param maxAmountLinks maximum amount of possible paths that can a node have.
