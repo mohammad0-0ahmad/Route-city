@@ -3,7 +3,7 @@ import java.util.ArrayList;
 /**
  * It represents a network of nodes.
  */
-public class Network implements Dijkstras,NodesToNetwork{
+public class Network implements Dijkstras,NodesToNetwork, Algo {
 
     /* static variables & methods */
     /**
@@ -112,8 +112,8 @@ public class Network implements Dijkstras,NodesToNetwork{
         return Math.max(result, 1);
     }
 
-    public String getShortestPath(Node start, Node end) {
-        return null;
+    public String getShortestPath(int start, int end) {
+        return Algo.algo(nodes,start,end);
     }
 
     /**
@@ -153,7 +153,7 @@ public class Network implements Dijkstras,NodesToNetwork{
      * @param nodesName bus station names
      * @param replace will make the function recreates network node depending on nodesName value in case its value was true OR it will just remove nodes relations in case its value was false.
      */
-    private void remake(String[] nodesName,boolean replace) {
+    public void remake(String[] nodesName, boolean replace) {
         // replacing nodes array with new one.
         if (replace) {
             nodes = new Node[nodesName.length];
