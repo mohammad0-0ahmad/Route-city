@@ -1,9 +1,14 @@
 package routeCity;
+
+import routeCity.Dijkstras.ShortestPath;
+
 import java.util.ArrayList;
+
 /**
- * It represents a network of nodes.
+ * It represents a network of nodes "bus stations".
+ * Note: Network nodes should be connected together to form a closed network.
  */
-public class Network implements Dijkstras,NodesToNetwork{
+public class Network implements NodesToNetwork {
 
     /* static variables & methods */
     /**
@@ -13,10 +18,16 @@ public class Network implements Dijkstras,NodesToNetwork{
     /**
      * Random network that fits the actual requirements.
      */
-    private static final Network instance = new Network(Network.BUS_STATIONS,3,1,10);
+    private static final Network instance = new Network(Network.BUS_STATIONS, 3, 1, 10);
+
+    /**
+     * Distance unit that used to represent the weight of a path.
+     */
+    private static final String DISTANCE_UNIT = " mils";
 
     /**
      * Getter method.
+     *
      * @return the only network object. "singleton".
      */
     public static Network getInstance() {
@@ -24,15 +35,20 @@ public class Network implements Dijkstras,NodesToNetwork{
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >Member variables<  */
-
+    /**
+     * An array that store all network node. "bus stations in the actual case."
+     */
     private Node[] nodes;
+
     /**
      * Getter method.
+     *
      * @return the nodes array
      */
     public Node[] getNodes() {
         return nodes;
     }
+
     /**
      * Amount maximum paths that a node has with the other nodes. Note: Its value should be greater or equals to 2 to be able to create a nodes network. "Should all nodes be connected together."
      */
@@ -52,14 +68,15 @@ public class Network implements Dijkstras,NodesToNetwork{
      * Constructor with possibility to create a network with other names at the stations name, more stations or
      * other amount of paths than provided in the project.
      * 2 or 3 nodes
-     * @param maxPaths maximum paths
+     *
+     * @param maxPaths  maximum paths
      * @param nodesName busstations names
      */
-    private Network(String[] nodesName,int maxPaths,int minWeight,int maxWeight) {
+    private Network(String[] nodesName, int maxPaths, int minWeight, int maxWeight) {
         this.maxPaths = maxPaths;
         this.minWeight = minWeight;
         this.maxWeight = maxWeight;
-        remake(nodesName,true);
+        remake(nodesName, true);
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >>>Member methods<<<  */
@@ -73,23 +90,23 @@ public class Network implements Dijkstras,NodesToNetwork{
         // Converting nodes array to array list and reorder it randomly.
         ArrayList<Node> temp = getRandomOrderedNodes(nodes);
         // Creating paths between all nodes that make them all connected. "To make sure that network will be closed."
-        for (int i = 0; i < temp.size()-1; i++){
-            temp.get(i).addLinkedNode(temp.get(i+1),getRandomWeight());
+        for (int i = 0; i < temp.size() - 1; i++) {
+            temp.get(i).addLinkedNode(temp.get(i + 1), getRandomWeight());
         }
         // Try to fill random paths between nodes so almost all nodes get maximum amount paths.
-        while (!isCompleted){
-            temp = getPossibleNodesToLink(temp,maxPaths);
+        while (!isCompleted) {
+            temp = getPossibleNodesToLink(temp, maxPaths);
             // If there are no nodes able to get linked will change isCompleted value to true to be able to end the process.
-            if (temp.size() <= 1){
+            if (temp.size() <= 1) {
                 isCompleted = true;
-            }else {
+            } else {
                 // Creating paths between nodes that are able to get connected.
                 for (Node node : temp) {
                     // Getting the all node that are able to be connected with the actual node.
-                    ArrayList<Node> possibleToLinkWithMe = getPossibleNodesToLink(temp,maxPaths,node);
+                    ArrayList<Node> possibleToLinkWithMe = getPossibleNodesToLink(temp, maxPaths, node);
                     // If there is a node able to be connected a path will be created in between.
-                    if (possibleToLinkWithMe.size() > 0){
-                        node.addLinkedNode(possibleToLinkWithMe.get(0),getRandomWeight());
+                    if (possibleToLinkWithMe.size() > 0) {
+                        node.addLinkedNode(possibleToLinkWithMe.get(0), getRandomWeight());
                     }
                 }
             }
@@ -98,22 +115,59 @@ public class Network implements Dijkstras,NodesToNetwork{
 
     /**
      * It returns a random weight that can be used as path weight between tow nodes.
+     *
      * @return a weight that is larger or equals than 1.
      */
     private int getRandomWeight() {
-        if (minWeight > maxWeight){
+        if (minWeight > maxWeight) {
             System.err.println("minWeight value is greater than maxWeight value. The values will be switched.");
             int temp = maxWeight;
             maxWeight = minWeight;
             minWeight = temp;
         }
         int between = maxWeight - minWeight;
-        int result = (int)(Math.round(Math.random() * between)) + minWeight;
+        int result = (int) (Math.round(Math.random() * between)) + minWeight;
         return Math.max(result, 1);
     }
 
+    /**
+     * It calls and implements Dijkstra's algorithm on the network.
+     *
+     * @param start start bus station "node".
+     * @param end   end bus station "node".
+     * @return string that explain the travel from start bus station to end one.
+     */
     public String getShortestPath(Node start, Node end) {
-        return null;
+        // Calling dijkstra's algorithm.
+        ShortestPath shortestPathBetweenStartAndEnd = Dijkstras.getShortestPath(this, start, end);
+        // Converting the result to string form.
+        StringBuilder result = new StringBuilder();
+        int pathWeight = shortestPathBetweenStartAndEnd.getWeight();
+        ArrayList<Node> busStationsInBetween = shortestPathBetweenStartAndEnd.getNodesOnThePath();
+        // In case start refers to the same object that end refers to.
+        if (pathWeight == 0 && busStationsInBetween.size() == 1) {
+            result.append("You are already in the desired bus station. ").append(start.getSymbol()).append(": ").append(start.getName());
+        }
+        // In case there are not bus stations "nodes" in between.
+        else if (busStationsInBetween.size() == 2) {
+            result.append("You can take direct bus from ").append(start.getSymbol()).append(": ").append(start.getName()).append(" to ").append(end.getSymbol()).append(": ").append(end.getName()).append("\n The distance in between is: ").append(pathWeight).append(DISTANCE_UNIT).append(" .");
+        }
+        // In case were bus stations in between start and end one.
+        else if (busStationsInBetween.size() > 2) {
+            result.append("The distance between ").append(start.getSymbol()).append(": ").append(start.getName()).append(" and ").append(end.getSymbol()).append(": ").append(end.getName()).append("is ").append(pathWeight).append(DISTANCE_UNIT).append(" .");
+            // Get extra details about the travel from start bus station to the end one.
+            result.append("\n More details:");
+            for (int i = 0; i < busStationsInBetween.size() - 1; i++) {
+                Node from = busStationsInBetween.get(i);
+                Node to = busStationsInBetween.get(i + 1);
+                result.append("\n").append(from.getSymbol()).append(": ").append(from.getName()).append(" -> ").append(to.getSymbol()).append(": ").append(to.getName());
+            }
+        }
+        // In case get other result.
+        else {
+            result.append("Could not find the way.");
+        }
+        return result.toString();
     }
 
     /**
@@ -130,13 +184,15 @@ public class Network implements Dijkstras,NodesToNetwork{
             StringBuilder rowToPrint = new StringBuilder(rowNode.getSymbol() + "\t");
             for (Node columnNode : nodes) {
                 int weightBetweenNodes = rowNode.isConnectedWith(columnNode);
-                switch (weightBetweenNodes){
+                switch (weightBetweenNodes) {
                     // -1 means that the nodes is not connected.
                     case -1:
-                        rowToPrint.append("-\t");break;
+                        rowToPrint.append("-\t");
+                        break;
                     // 0 means that rowNode and columnNode refers to the same node.
                     case 0:
-                        rowToPrint.append("\t");break;
+                        rowToPrint.append("\t");
+                        break;
                     // adding the weight of the path that is exist between the rowNode and columnNode.
                     default:
                         rowToPrint.append(weightBetweenNodes).append("\t");
@@ -150,19 +206,20 @@ public class Network implements Dijkstras,NodesToNetwork{
 
     /**
      * Function to create the nodes and set the network OR to recreate new relations between the nodes of an exist network.
+     *
      * @param nodesName bus station names
-     * @param replace will make the function recreates network node depending on nodesName value in case its value was true OR it will just remove nodes relations in case its value was false.
+     * @param replace   will make the function recreates network node depending on nodesName value in case its value was true OR it will just remove nodes relations in case its value was false.
      */
-    private void remake(String[] nodesName,boolean replace) {
+    private void remake(String[] nodesName, boolean replace) {
         // replacing nodes array with new one.
         if (replace) {
             nodes = new Node[nodesName.length];
             for (int i = 0; i < nodes.length; i++) {
                 nodes[i] = new Node(getNodeSymbol(i), BUS_STATIONS[i]);
             }
-        }else {
+        } else {
             // Clearing nodes relations.
-            for (Node node:nodes) {
+            for (Node node : nodes) {
                 node.getLinkedNodes().clear();
             }
         }
@@ -171,21 +228,22 @@ public class Network implements Dijkstras,NodesToNetwork{
     }
 
     /**
-     * It calls {@link #remake(String[],boolean)} to clear the relation between the actual network nodes.
+     * It calls {@link #remake(String[], boolean)} to clear the relation between the actual network nodes.
      * Made it just to make calling the method easier without need to send parameters.
      */
-    public void remake(){
-        remake(null,false);
+    public void remake() {
+        remake(null, false);
     }
 
     /**
      * Method to get the correct symbol for the station. It use the ASCII number and begin at "A" and add some numbers.
      * If a higher amount than 26 nodes is used it start over with an "A" but other numbers after.
+     *
      * @param index nodes
      * @return the symbolname
      */
     private String getNodeSymbol(int index) {
-        char letter = (char) (index % 26+65);
-        return letter + ""+(index / 26 + 1);
+        char letter = (char) (index % 26 + 65);
+        return letter + "" + (index / 26 + 1);
     }
 }

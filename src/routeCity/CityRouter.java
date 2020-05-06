@@ -80,7 +80,10 @@ public abstract class CityRouter {
                 System.out.println("This is not a bus station symbol in the network. Please try again.");
             }
         }
-     //   algo.algo(network,from,to);
+
+        // todo improve method calling and correcting some words.
+        // Getting and printing the shortest between the two selected bus stations.
+        System.out.println("\n"+network.getShortestPath(network.getNodes()[from],network.getNodes()[to])+"\n");
     }
     /**
      * This method converts the symbolname to an integer depending on the position in the nodeslist.
