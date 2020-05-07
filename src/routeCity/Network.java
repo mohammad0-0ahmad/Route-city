@@ -160,7 +160,9 @@ public class Network implements NodesToNetwork {
             for (int i = 0; i < busStationsInBetween.size() - 1; i++) {
                 Node from = busStationsInBetween.get(i);
                 Node to = busStationsInBetween.get(i + 1);
-                result.append("\n").append(from.getSymbol()).append(": ").append(from.getName()).append(" -> ").append(to.getSymbol()).append(": ").append(to.getName());
+                // the following line adds more details about the travel form start node and end and the weight of every small path of the whole path.
+                // ex: C1: Drottningtorget -- 3 mils --> D1: Hamngatan
+                result.append("\n").append(from.getSymbol()).append(": ").append(from.getName()).append(" -- ").append(from.isConnectedWith(to)).append(DISTANCE_UNIT).append(" --> ").append(to.getSymbol()).append(": ").append(to.getName());
             }
         }
         // In case get other result.
