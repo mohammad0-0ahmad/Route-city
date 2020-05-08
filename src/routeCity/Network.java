@@ -23,7 +23,7 @@ public class Network implements NodesToNetwork {
     /**
      * Distance unit that used to represent the weight of a path.
      */
-    private static final String DISTANCE_UNIT = " mils";
+    private static final String DISTANCE_UNIT = " km";
 
     /**
      * Getter method.
@@ -150,13 +150,13 @@ public class Network implements NodesToNetwork {
         }
         // In case there are not bus stations "nodes" in between.
         else if (busStationsInBetween.size() == 2) {
-            result.append("You can take direct bus from ").append(start.getSymbol()).append(": ").append(start.getName()).append(" to ").append(end.getSymbol()).append(": ").append(end.getName()).append("\n The distance in between is: ").append(pathWeight).append(DISTANCE_UNIT).append(" .");
+            result.append("You can take direct bus from ").append(start.getSymbol()).append(": ").append(start.getName()).append(" to ").append(end.getSymbol()).append(": ").append(end.getName()).append(".\nThe distance in between is: ").append(pathWeight).append(DISTANCE_UNIT).append(".");
         }
         // In case were bus stations in between start and end one.
         else if (busStationsInBetween.size() > 2) {
-            result.append("The distance between ").append(start.getSymbol()).append(": ").append(start.getName()).append(" and ").append(end.getSymbol()).append(": ").append(end.getName()).append("is ").append(pathWeight).append(DISTANCE_UNIT).append(" .");
+            result.append("The distance between ").append(start.getSymbol()).append(": ").append(start.getName()).append(" and ").append(end.getSymbol()).append(": ").append(end.getName()).append("is ").append(pathWeight).append(DISTANCE_UNIT).append(".");
             // Get extra details about the travel from start bus station to the end one.
-            result.append("\n More details:");
+            result.append("\nMore details:");
             for (int i = 0; i < busStationsInBetween.size() - 1; i++) {
                 Node from = busStationsInBetween.get(i);
                 Node to = busStationsInBetween.get(i + 1);
