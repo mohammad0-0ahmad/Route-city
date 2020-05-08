@@ -203,7 +203,6 @@ public class Network implements NodesToNetwork {
             rowsToPrint.append(rowToPrint.append("\n"));
         }
         System.out.println(firstRow + "\n" + rowsToPrint + "\n" + symbolsAndBusStations);
-        CityRouter.setPrinted();
     }
 
     /**

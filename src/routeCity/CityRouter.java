@@ -7,39 +7,34 @@ import java.util.Scanner;
  */
 public abstract class CityRouter {
     private static Network network= Network.getInstance();
-    private static String userInput = "";
-    private static boolean currentNetworkIsPrinted = false;
-    private static Scanner sc = new Scanner(System.in);
     /*  > Static methods<<<  */
 
     /**
-     * A setter method to avoid print the network again in search travel if the network already is printed.
-     */
-    public static void setPrinted() {
-    currentNetworkIsPrinted=true;
-    }
-    /**
-     * This menu prints the menu and calls the userinputmethod and the switchmethod.
+     * This menu prints the menu and calls the user input method and the switch method.
      */
     public static void startInConsole(){
+        boolean currentNetworkIsPrinted = false;
+        String userInput = "";
         while (!userInput.equals("Q")) {
             System.out.println("Main menu:\nPlease make your choice\n[P] Print network\n[S] Search travel\n[R] Remake network\n[Q] Exit");
             userInput = userInput();
             switch (userInput) {
                 case "P": {
                     network.printNetwork();
+                    currentNetworkIsPrinted = true;
                     break;
                 }
                 case "S": {
                     if (!currentNetworkIsPrinted) {
                         network.printNetwork();
+                        currentNetworkIsPrinted = true;
                     }
                     enterTravelStations();
                     break;
                 }
                 case "R": {
                     network.remake();
-                    System.out.println("The network is remaked in a randomed way.");
+                    System.out.println("The network is remade in a random way.");
                     currentNetworkIsPrinted=false;
                     break;
                 }
@@ -54,48 +49,45 @@ public abstract class CityRouter {
     }
     /**
      * This method take an input and return a capital string.
-     * @return userinput
+     * @return user input
      */
     private static String userInput() {
-        userInput = sc.next().toUpperCase();
-        return  userInput;
+        return new Scanner(System.in).nextLine().toUpperCase();
     }
     /**
-     * This method ask for the bus stations the user wants to travel between and calling the dijkstras method with the nodenumbers.
+     * This method ask for the bus stations the user wants to travel between and calling the dijkstra's algorithm method with the node numbers.
      */
     private static void enterTravelStations() {
-        int from =-1;
-        int to =-1;
+        Node from =null;
+        Node to =null;
         System.out.println("Please enter the bus station symbol you want to travel from:");
-        while (from==-1) {
+        while (from==null) {
             from = convertSymbolToInt();
-            if (from==-1) {
+            if (from==null) {
                 System.out.println("This is not a bus station symbol in the network. Please try again.");
             }
         }
         System.out.println("Please enter the bus station symbol you want to travel to:");
-        while (to==-1) {
+        while (to==null) {
             to = convertSymbolToInt();
-            if (to==-1) {
+            if (to==null) {
                 System.out.println("This is not a bus station symbol in the network. Please try again.");
             }
         }
-
-        // todo improve method calling and correcting some words.
         // Getting and printing the shortest between the two selected bus stations.
-        System.out.println("\n"+network.getShortestPath(network.getNodes()[from],network.getNodes()[to])+"\n");
+        System.out.println("\n"+network.getShortestPath(from,to)+"\n");
     }
     /**
-     * This method converts the symbolname to an integer depending on the position in the nodeslist.
-     * @return The position in the arraylist
+     * This method converts the symbol name to an integer depending on the position in the nodes list.
+     * @return The position in the array list
      */
-    private static int convertSymbolToInt() {
-        String symbolToConvert = sc.next().toUpperCase();
+    private static Node convertSymbolToInt() {
+        String symbolToConvert = new Scanner(System.in).nextLine().toUpperCase();
         for (int i = 0;i<network.getNodes().length;i++) {
             if (network.getNodes()[i].getSymbol().equals(symbolToConvert)) {
-                return i;
+                return network.getNodes()[i];
             }
         }
-        return -1;
+        return null;
     }
 }
