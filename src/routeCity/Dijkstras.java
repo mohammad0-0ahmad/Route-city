@@ -14,7 +14,7 @@ public abstract class Dijkstras {
     /**
      * It represents infinity in integer limits. "With other words it is the largest value of int range."
      */
-    private static int INT_INFINITY = (int) (2d / 0);
+    private static final int INT_INFINITY = (int) (2d / 0);
 
     /**
      * It the main method that implements dijkstra's algorithm to find shortest path between two nodes of node network.
@@ -155,11 +155,11 @@ public abstract class Dijkstras {
         /**
          * Refers to the weights of the whole path form start node to end path.
          */
-        private int weight;
+        private final int weight;
         /**
          * Array list contains all nodes that should passed to reach a destination node.
          */
-        private ArrayList<Node> nodesOnThePath;
+        private final ArrayList<Node> nodesOnThePath;
 
         private ShortestPath(int weight) {
             this.weight = weight;

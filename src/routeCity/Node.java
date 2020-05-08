@@ -11,15 +11,15 @@ public class Node {
     /**
      * Storing a symbol that represent the node. "to make it easier for user in console for example"
      */
-    private String symbol;
+    private final String symbol;
     /**
      * The actual name of the node. can be for example bus station or city name etc.
      */
-    private String name;
+    private final String name;
     /**
      * Storing paths that refer to the nodes which are connected with the actual node.
      */
-    private ArrayList<Path> linkedNodes;
+    private final ArrayList<Path> linkedNodes;
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >>Constructors<<  */
 
@@ -134,11 +134,11 @@ public class Node {
         /**
          * It refer to the weight of the path like distance and weather traffic status in the path etc. Note!! In the actual version it represent just the distance between two nodes.
          */
-        private int weight;
+        private final int weight;
         /**
          * The destination node.
          */
-        private Node destinationNode;
+        private final Node destinationNode;
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*  >>Constructors<<  */
 

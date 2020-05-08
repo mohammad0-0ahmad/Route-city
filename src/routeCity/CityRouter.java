@@ -6,7 +6,7 @@ import java.util.Scanner;
  * This class handles the output in the menu and calls the desired methods.
  */
 public abstract class CityRouter {
-    private static Network network= Network.getInstance();
+    private static final Network network= Network.getInstance();
     /*  > Static methods<<<  */
 
     /**
@@ -62,14 +62,14 @@ public abstract class CityRouter {
         Node to =null;
         System.out.println("Please enter the bus station symbol you want to travel from:");
         while (from==null) {
-            from = convertSymbolToInt();
+            from = convertSymbolToNode();
             if (from==null) {
                 System.out.println("This is not a bus station symbol in the network. Please try again.");
             }
         }
         System.out.println("Please enter the bus station symbol you want to travel to:");
         while (to==null) {
-            to = convertSymbolToInt();
+            to = convertSymbolToNode();
             if (to==null) {
                 System.out.println("This is not a bus station symbol in the network. Please try again.");
             }
@@ -78,10 +78,10 @@ public abstract class CityRouter {
         System.out.println("\n"+network.getShortestPath(from,to)+"\n");
     }
     /**
-     * This method converts the symbol name to an integer depending on the position in the nodes list.
-     * @return The position in the array list
+     * This method getting user input and returns desired node depending on the input.
+     * @return The desired node
      */
-    private static Node convertSymbolToInt() {
+    private static Node convertSymbolToNode() {
         String symbolToConvert = new Scanner(System.in).nextLine().toUpperCase();
         for (int i = 0;i<network.getNodes().length;i++) {
             if (network.getNodes()[i].getSymbol().equals(symbolToConvert)) {

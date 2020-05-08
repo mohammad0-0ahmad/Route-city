@@ -14,7 +14,7 @@ public interface NodesToNetwork {
      * @return random ordered array list with the same nodes.
      */
     default ArrayList<Node> getRandomOrderedNodes(Node[] nodes){
-        ArrayList result = new ArrayList(Arrays.asList(nodes));
+        ArrayList<Node> result = new ArrayList(Arrays.asList(nodes));
         // reorder nodes randomly.
         Collections.shuffle(result);
         return result;
@@ -82,7 +82,7 @@ public interface NodesToNetwork {
      * @return an array stores all nodes that have ability to be connected with fitsMe node object OR an empty one.
      */
     default ArrayList<Node> getPossibleNodesToLink(ArrayList<Node> nodes,int maxAmountLinks,Node fitsMe){
-        // If fitsMe node has already reached maximum limit a empty arraylist will be returned.
+        // If fitsMe node has already reached maximum limit a empty array list will be returned.
         if (fitsMe == null || fitsMe.getLinkedNodes().size() == maxAmountLinks){
             return new ArrayList<>();
         }

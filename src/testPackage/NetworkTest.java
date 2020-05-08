@@ -1,8 +1,4 @@
-package Testpackage;
-
-import org.junit.jupiter.api.Test;
-import routeCity.Network;
-import static org.junit.jupiter.api.Assertions.*;
+package testPackage;
 
 class NetworkTest {
 

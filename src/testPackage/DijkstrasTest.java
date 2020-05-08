@@ -1,12 +1,10 @@
-package Testpackage;
+package testPackage;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import routeCity.Dijkstras.*;
 import routeCity.Network;
 import routeCity.Node;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import static routeCity.Dijkstras.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -117,7 +115,7 @@ public class DijkstrasTest {
         a.addLinkedNode(d,5);
         b.addLinkedNode(c,1);
         c.addLinkedNode(d,1);
-        // Turning nodes array into arraylist to be able to call checkLinkedNodes method.
+        // Turning nodes array into array list to be able to call checkLinkedNodes method.
         ArrayList<Node> nodesAsList = new ArrayList<>(Arrays.asList(nodes));
         ArrayList<Node> unvisitedNodes = new ArrayList<>(nodesAsList);
         //  prepare weightTable that can be tested.

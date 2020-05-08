@@ -70,7 +70,7 @@ public class Network implements NodesToNetwork {
      * 2 or 3 nodes
      *
      * @param maxPaths  maximum paths
-     * @param nodesName busstations names
+     * @param nodesName bus stations names
      */
     private Network(String[] nodesName, int maxPaths, int minWeight, int maxWeight) {
         this.maxPaths = maxPaths;
@@ -114,7 +114,7 @@ public class Network implements NodesToNetwork {
     }
 
     /**
-     * It returns a random weight that can be used as path weight between tow nodes.
+     * It returns a random weight that can be used as path weight between two nodes.
      *
      * @return a weight that is larger or equals than 1.
      */
@@ -154,7 +154,7 @@ public class Network implements NodesToNetwork {
         }
         // In case were bus stations in between start and end one.
         else if (busStationsInBetween.size() > 2) {
-            result.append("The distance between ").append(start.getSymbol()).append(": ").append(start.getName()).append(" and ").append(end.getSymbol()).append(": ").append(end.getName()).append("is ").append(pathWeight).append(DISTANCE_UNIT).append(".");
+            result.append("The distance between ").append(start.getSymbol()).append(": ").append(start.getName()).append(" and ").append(end.getSymbol()).append(": ").append(end.getName()).append(" is ").append(pathWeight).append(DISTANCE_UNIT).append(".");
             // Get extra details about the travel from start bus station to the end one.
             result.append("\nMore details:");
             for (int i = 0; i < busStationsInBetween.size() - 1; i++) {
@@ -206,7 +206,7 @@ public class Network implements NodesToNetwork {
     }
 
     /**
-     * Function to create the nodes and set the network OR to recreate new relations between the nodes of an exist network.
+     * Function to create the nodes and set the network OR to recreate new relations between the nodes of an existing network.
      *
      * @param nodesName bus station names
      * @param replace   will make the function recreates network node depending on nodesName value in case its value was true OR it will just remove nodes relations in case its value was false.
@@ -241,7 +241,7 @@ public class Network implements NodesToNetwork {
      * If a higher amount than 26 nodes is used it start over with an "A" but other numbers after.
      *
      * @param index nodes
-     * @return the symbolname
+     * @return the symbol name
      */
     private String getNodeSymbol(int index) {
         char letter = (char) (index % 26 + 65);
