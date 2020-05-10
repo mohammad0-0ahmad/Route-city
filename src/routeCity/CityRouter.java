@@ -16,7 +16,7 @@ public abstract class CityRouter {
         boolean currentNetworkIsPrinted = false;
         String userInput = "";
         while (!userInput.equals("Q")) {
-            System.out.println("Main menu:\nPlease make your choice\n[P] Print network\n[S] Search travel\n[R] Remake network\n[Q] Exit");
+            System.out.println("Main menu:\nPlease make your choice and press enter\n[P] Print network\n[S] Search travel\n[R] Remake network\n[Q] Exit");
             userInput = userInput();
             switch (userInput) {
                 case "P": {

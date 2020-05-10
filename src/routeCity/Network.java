@@ -41,15 +41,6 @@ public class Network implements NodesToNetwork {
     private Node[] nodes;
 
     /**
-     * Getter method.
-     *
-     * @return the nodes array
-     */
-    public Node[] getNodes() {
-        return nodes;
-    }
-
-    /**
      * Amount maximum paths that a node has with the other nodes. Note: Its value should be greater or equals to 2 to be able to create a nodes network. "Should all nodes be connected together."
      */
     private final int maxPaths;
@@ -80,6 +71,14 @@ public class Network implements NodesToNetwork {
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /*  >>>Member methods<<<  */
+    /**
+     * Getter method.
+     *
+     * @return the nodes array
+     */
+    public Node[] getNodes() {
+        return nodes;
+    }
 
     /**
      * It creates random paths "relations" between network nodes.
@@ -156,7 +155,7 @@ public class Network implements NodesToNetwork {
         else if (busStationsInBetween.size() > 2) {
             result.append("The distance between ").append(start.getSymbol()).append(": ").append(start.getName()).append(" and ").append(end.getSymbol()).append(": ").append(end.getName()).append(" is ").append(pathWeight).append(DISTANCE_UNIT).append(".");
             // Get extra details about the travel from start bus station to the end one.
-            result.append("\nMore details:");
+            result.append("\nMore details where to change bus and distances:");
             for (int i = 0; i < busStationsInBetween.size() - 1; i++) {
                 Node from = busStationsInBetween.get(i);
                 Node to = busStationsInBetween.get(i + 1);
