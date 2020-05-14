@@ -155,7 +155,7 @@ public class Network implements NodesToNetwork {
         else if (busStationsInBetween.size() > 2) {
             result.append("The distance between ").append(start.getSymbol()).append(": ").append(start.getName()).append(" and ").append(end.getSymbol()).append(": ").append(end.getName()).append(" is ").append(pathWeight).append(DISTANCE_UNIT).append(".");
             // Get extra details about the travel from start bus station to the end one.
-            result.append("\nMore details where to change bus and distances:");
+            result.append("\nMore details:");
             for (int i = 0; i < busStationsInBetween.size() - 1; i++) {
                 Node from = busStationsInBetween.get(i);
                 Node to = busStationsInBetween.get(i + 1);
